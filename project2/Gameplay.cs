@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Tracing;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace project2
+﻿namespace project2
 {
     class Gameplay
     {
@@ -26,8 +18,7 @@ namespace project2
             Random rnd = new Random();
             int randomNumber = rnd.Next(0, 5757);
             string chosenWord = words[randomNumber];
-            char[] wordLetters = { chosenWord[0], chosenWord[1], chosenWord[2], chosenWord[3], chosenWord[4] };
-            this.choice = wordLetters;
+            this.choice = chosenWord.ToCharArray();
         }
         public void Comparer(string word, char[] letters) //ne bachka
         {
@@ -36,7 +27,8 @@ namespace project2
                 if (word[i] == letters[i])
                 {
                     this.greenLetters.Add(letters[i]);
-                } else if (letters.Contains(word[i]) && word[i] != letters[i])
+                }
+                else if (letters.Contains(word[i]) && word[i] != letters[i])
                 {
                     this.yellowLetters.Add(letters[i]);
                 }
