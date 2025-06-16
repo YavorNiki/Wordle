@@ -2,14 +2,9 @@
 {
     internal class Program
     {
-
         static void Main(string[] args)
         {
-
-            //List s vsichki dumi s 5 bukvi
-            // https://github.com/cheaderthecoder/5-Letter-words/blob/main/words.txt
-
-            string location = "words.txt"; // smenih streamReader, zashtoto neshto ne stavashe da razpoznava dali dumata q ima i chatgpt mi predloji tova da izpolzvam
+            string location = "words.txt";
             string[] words = File.ReadAllLines(location);
 
             for (int i = 0; i < words.Length; i++)
@@ -23,18 +18,65 @@
             }
 
             View view = new View();
-            view.Wordle();
 
-            Gameplay gm = new Gameplay();
-            gm.ChooseWord(words);
-            for (int j = 0; j < 6; j++)
+            bool playAgain = true;
+
+            while (playAgain)
             {
-                view.WriteWord(gm, view.Try(gm, words));
+                Gameplay gm = new Gameplay();
+                gm.ChooseWord(words);
+                List<string> pastGuesses = new List<string>();
+                bool won = false;
+
+                for (int j = 0; j < 6; j++)
+                {
+                    while (true)
+                    {
+                        Console.Clear();
+                        view.Wordle();
+                        view.WriteBoard(gm, pastGuesses);
+                        view.DisplayKeyboard(gm);
+
+                        string guess = view.Try(gm, words, pastGuesses);
+                        if (guess != null)
+                        {
+                            gm.Comparer(guess);
+                            pastGuesses.Add(guess);
+
+                            if (guess == new string(gm.Choice))
+                            {
+                                Console.Clear();
+                                view.Wordle();
+                                view.WriteBoard(gm, pastGuesses);
+                                view.DisplayKeyboard(gm);
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine("\nYOU WIN!");
+                                Console.ResetColor();
+                                won = true;
+                            }
+                            break;
+                        }
+                    }
+
+                    if (won)
+                        break;
+                }
+
+                if (!won)
+                {
+                    Console.Clear();
+                    view.Wordle();
+                    view.WriteBoard(gm, pastGuesses);
+                    view.DisplayKeyboard(gm);
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"\nYOU LOSE! The word was: {new string(gm.Choice).ToUpper()}");
+                    Console.ResetColor();
+                }
+
+                Console.Write("\nDo you want to play again? (y/n): ");
+                string response = Console.ReadLine().Trim().ToLower();
+                playAgain = response == "y";
             }
-
-            Console.WriteLine(gm.Choice);
-
-
         }
     }
 }
